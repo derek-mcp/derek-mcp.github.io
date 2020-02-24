@@ -27,6 +27,31 @@
     </entry>
     
     
+    
+    <entry>
+      <title>Mybatis 的工作流程</title>
+      <link href="/posts/481138135.html"/>
+      <url>/posts/481138135.html</url>
+      
+        <content type="html"><![CDATA[<ol><li><p>配置 mybatis-config.xml 文件</p><p><code>private static String RESOURCE = &quot;mybatis-config.xml&quot;;</code></p></li><li><p>加载 mybatis-config.xml 文件</p><p><code>InputStream is = Resources.getResourceAsStream(RESOURCE);</code></p></li><li><p>获取工厂对象 SqlSessionFactory</p><p><code>SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(is);</code></p></li><li><p>获取 SqlSession</p><p><code>SqlSession sqlSession = sqlSessionFactory.openSession();</code></p></li><li><p>执行配置的 SQL</p><p><code>sqlSession.selectList(&quot;findAll&quot;);</code></p></li><li><p>关闭资源</p><p><code>sqlSession.close();</code></p></li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> Java </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Mybatis </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
   
   
 </search>
