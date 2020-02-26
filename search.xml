@@ -4,6 +4,56 @@
   
     
     <entry>
+      <title>Laravel 日志文件写入失败</title>
+      <link href="/posts/3705463951.html"/>
+      <url>/posts/3705463951.html</url>
+      
+        <content type="html"><![CDATA[<p>我们知道 <code>Laravel</code> 中日志系统的 <code>daily</code> 驱动是新创建一个文件，且是以日期来命名文件的。所以第一次创建日志的用户就显得尤为重要，如果文件创建的 <code>Onwer</code>和 <code>Group</code> 不对，其他的用户触发写入日志文件就会失败。</p><p>在 <code>Laravel</code> 中有多少种不同的用户可能创建日志文件：</p><ul><li><code>Crontab</code> 中执行的定时任务，跟创建 <code>Crontab</code> 的用户有关，此时创建的日志文件 <code>Owner</code> 和 <code>Group</code> 值分别是该用户以及默认的 <code>Group</code>。</li><li>一些常驻的后台进程，比如 <code>Laravel</code> 中的 <code>queue work</code>，此时创建的日志文件 <code>Owner</code> 和 <code>Group</code> 值分别是执行该进程的用户以及所属的默认 <code>Group</code>。</li><li>正常用户访问网站产生的日志文件，此时创建的日志文件的 <code>Owner</code> 和 <code>Group</code> 都是 web 服务器默认的用户。</li></ul><p>解决方法：</p><ol><li><p>指定 <code>www</code> 用户执行 <code>crontab</code></p><p><code>sudo crontab -u www -e</code></p></li><li><p><code>Laravel</code> 中修改创建日志文件的权限：</p><p>修改 <code>config/logging.php</code> 文件：</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'daily'</span> =&gt; [</span><br><span class="line">    <span class="string">'driver'</span> =&gt; <span class="string">'daily'</span>,</span><br><span class="line">    <span class="string">'path'</span> =&gt; storage_path(<span class="string">'logs/laravel.log'</span>),</span><br><span class="line">    <span class="string">'level'</span> =&gt; <span class="string">'debug'</span>,</span><br><span class="line">    <span class="string">'days'</span> =&gt; <span class="number">14</span>,</span><br><span class="line">    <span class="string">'permission'</span> =&gt; <span class="number">0664</span>   <span class="comment">// 此处是添加的文件权限</span></span><br><span class="line">],</span><br></pre></td></tr></table></figure></li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> PHP </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Laravel </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Mybatis 参处理</title>
+      <link href="/posts/89798448.html"/>
+      <url>/posts/89798448.html</url>
+      
+        <content type="html"><![CDATA[<h4 id="Mybatis-入参处理"><a href="#Mybatis-入参处理" class="headerlink" title="Mybatis 入参处理"></a>Mybatis 入参处理</h4><ul><li>参数处理<ul><li>传递单个参数的形式（Mybatis 会自动进行参数的赋值）</li><li>传递多个参数（Mybatis 会自动封装在 Map 集合中）</li><li>Collection、List、Array 作为参数，封装为 Map，但是有一定的规则。</li></ul></li><li>参数处理详解<ul><li>单参数 Mybatis 不做特殊处理，直接取出参数值赋给 xml 文件。</li><li>多参数：<ol><li>JavaBean 传递参数 POJO 类</li><li>Map 接口</li><li>注解 <code>@Param</code></li></ol></li><li>集合：在 Mapper 接口方法入参处使用 <code>@Param</code> 进行标注</li></ul></li><li>参数处理总结<ul><li>使用 Map 传递参数，业务可读性差</li><li><code>@Param</code>，收到个数 (n) 的影响，建议 n&lt;5 时，为最佳的传参方式</li><li>以上参数的处理各有利弊，参数 &gt; 5 时，建议用 JavaBean 方法。</li></ul></li><li>foreach 元素<ul><li>特点：循环遍历集合，支持数组和 List、Set 接口，对其提供遍历功能</li><li>应用：数据库中数据库字典的内容，经常使用 foreach 元素查找</li></ul></li><li>Mybatis 核心对象<ul><li>ParameterHandle：处理 SQL 的参数对象</li><li>ResultSetHandler：处理 SQL 的返回结果集</li><li>StatementHandler：数据库的处理对象，用于执行 SQL 语句</li><li>Executor：Mybatis 的执行器，用于执行增删改查</li></ul></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> Java </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Mybatis </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Mybatis 的工作流程</title>
       <link href="/posts/481138135.html"/>
       <url>/posts/481138135.html</url>
