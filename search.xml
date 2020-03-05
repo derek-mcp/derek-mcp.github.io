@@ -4,9 +4,34 @@
   
     
     <entry>
+      <title>关于 Nginx 的 fastcgi_pass 配置错误</title>
+      <link href="/Linux/1801997912.html"/>
+      <url>/Linux/1801997912.html</url>
+      
+        <content type="html"><![CDATA[<p>项目在 Nginx 下配置完成后访问报了 502 错误，查看 nginx 日志，发现错误信息为：</p><p><code>connect() to unix:/tmp/php-cgi.sock failed (2: No such file or directory) while connecting to upstream, client: x.x.x.x, server: xxx.xxx.xxx, request: &quot;POST /index.php HTTP/1.1&quot;, upstream: &quot;fastcgi://unix:/tmp/php-cgi.sock:&quot;</code></p><p>发现是 nginx 配置文件中的 fastcgi_pass 和 php-fpm 的 listen 不一致的问题</p><p>找到服务器的 php-fpm 的的配置文件 <code>/usr/local/php/etc/php-fpm.conf</code></p><p>查看 <code>php-fpm.conf</code> 中的 listen 为：<code>listen = 127.0.0.1:9000</code></p><p>修改 nginx 下的 vhost 配置文件为 <code>fastcgi_pass 127.0.0.1:9000;</code></p><p>然后重启 nginx 即可。 </p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Linux </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Nginx </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Laravel 日志文件写入失败</title>
-      <link href="/posts/3705463951.html"/>
-      <url>/posts/3705463951.html</url>
+      <link href="/PHP/3705463951.html"/>
+      <url>/PHP/3705463951.html</url>
       
         <content type="html"><![CDATA[<p>我们知道 <code>Laravel</code> 中日志系统的 <code>daily</code> 驱动是新创建一个文件，且是以日期来命名文件的。所以第一次创建日志的用户就显得尤为重要，如果文件创建的 <code>Onwer</code>和 <code>Group</code> 不对，其他的用户触发写入日志文件就会失败。</p><p>在 <code>Laravel</code> 中有多少种不同的用户可能创建日志文件：</p><ul><li><code>Crontab</code> 中执行的定时任务，跟创建 <code>Crontab</code> 的用户有关，此时创建的日志文件 <code>Owner</code> 和 <code>Group</code> 值分别是该用户以及默认的 <code>Group</code>。</li><li>一些常驻的后台进程，比如 <code>Laravel</code> 中的 <code>queue work</code>，此时创建的日志文件 <code>Owner</code> 和 <code>Group</code> 值分别是执行该进程的用户以及所属的默认 <code>Group</code>。</li><li>正常用户访问网站产生的日志文件，此时创建的日志文件的 <code>Owner</code> 和 <code>Group</code> 都是 web 服务器默认的用户。</li></ul><p>解决方法：</p><ol><li><p>指定 <code>www</code> 用户执行 <code>crontab</code></p><p><code>sudo crontab -u www -e</code></p></li><li><p><code>Laravel</code> 中修改创建日志文件的权限：</p><p>修改 <code>config/logging.php</code> 文件：</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'daily'</span> =&gt; [</span><br><span class="line">    <span class="string">'driver'</span> =&gt; <span class="string">'daily'</span>,</span><br><span class="line">    <span class="string">'path'</span> =&gt; storage_path(<span class="string">'logs/laravel.log'</span>),</span><br><span class="line">    <span class="string">'level'</span> =&gt; <span class="string">'debug'</span>,</span><br><span class="line">    <span class="string">'days'</span> =&gt; <span class="number">14</span>,</span><br><span class="line">    <span class="string">'permission'</span> =&gt; <span class="number">0664</span>   <span class="comment">// 此处是添加的文件权限</span></span><br><span class="line">],</span><br></pre></td></tr></table></figure></li></ol>]]></content>
       
@@ -29,9 +54,9 @@
     
     
     <entry>
-      <title>Mybatis 参处理</title>
-      <link href="/posts/89798448.html"/>
-      <url>/posts/89798448.html</url>
+      <title>Mybatis 参数处理</title>
+      <link href="/Java/89798448.html"/>
+      <url>/Java/89798448.html</url>
       
         <content type="html"><![CDATA[<h4 id="Mybatis-入参处理"><a href="#Mybatis-入参处理" class="headerlink" title="Mybatis 入参处理"></a>Mybatis 入参处理</h4><ul><li>参数处理<ul><li>传递单个参数的形式（Mybatis 会自动进行参数的赋值）</li><li>传递多个参数（Mybatis 会自动封装在 Map 集合中）</li><li>Collection、List、Array 作为参数，封装为 Map，但是有一定的规则。</li></ul></li><li>参数处理详解<ul><li>单参数 Mybatis 不做特殊处理，直接取出参数值赋给 xml 文件。</li><li>多参数：<ol><li>JavaBean 传递参数 POJO 类</li><li>Map 接口</li><li>注解 <code>@Param</code></li></ol></li><li>集合：在 Mapper 接口方法入参处使用 <code>@Param</code> 进行标注</li></ul></li><li>参数处理总结<ul><li>使用 Map 传递参数，业务可读性差</li><li><code>@Param</code>，收到个数 (n) 的影响，建议 n&lt;5 时，为最佳的传参方式</li><li>以上参数的处理各有利弊，参数 &gt; 5 时，建议用 JavaBean 方法。</li></ul></li><li>foreach 元素<ul><li>特点：循环遍历集合，支持数组和 List、Set 接口，对其提供遍历功能</li><li>应用：数据库中数据库字典的内容，经常使用 foreach 元素查找</li></ul></li><li>Mybatis 核心对象<ul><li>ParameterHandle：处理 SQL 的参数对象</li><li>ResultSetHandler：处理 SQL 的返回结果集</li><li>StatementHandler：数据库的处理对象，用于执行 SQL 语句</li><li>Executor：Mybatis 的执行器，用于执行增删改查</li></ul></li></ul>]]></content>
       
@@ -55,8 +80,8 @@
     
     <entry>
       <title>Mybatis 的工作流程</title>
-      <link href="/posts/481138135.html"/>
-      <url>/posts/481138135.html</url>
+      <link href="/Java/481138135.html"/>
+      <url>/Java/481138135.html</url>
       
         <content type="html"><![CDATA[<p>关于在 Mybatis 中使用简单工厂 SqlSessionFactory 访问数据库的流程。</p><ol><li><p>配置 mybatis-config.xml 文件</p><p><code>private static String RESOURCE = &quot;mybatis-config.xml&quot;;</code></p></li><li><p>加载 mybatis-config.xml 文件</p><p><code>InputStream is = Resources.getResourceAsStream(RESOURCE);</code></p></li><li><p>获取工厂对象 SqlSessionFactory</p><p><code>SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(is);</code></p></li><li><p>获取 SqlSession</p><p><code>SqlSession sqlSession = sqlSessionFactory.openSession();</code></p></li><li><p>执行配置的 SQL</p><p><code>sqlSession.selectList(&quot;findAll&quot;);</code></p></li><li><p>关闭资源</p><p><code>sqlSession.close();</code></p></li></ol>]]></content>
       
@@ -71,31 +96,6 @@
         <tags>
             
             <tag> Mybatis </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>Hello World</title>
-      <link href="/posts/1243066710.html"/>
-      <url>/posts/1243066710.html</url>
-      
-        <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>]]></content>
-      
-      
-      <categories>
-          
-          <category> hexo </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> hexo </tag>
             
         </tags>
       
